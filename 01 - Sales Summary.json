@@ -1,0 +1,123 @@
+{
+  "name": "01 - Sales Summary",
+  "nodes": [
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are in charge of client orders. Your job is to take incoming information regarding new orders and give a nice summary that will be emailed to the team. The email should be signed off from \"Customer Success Team\".\n\nHere is the information on client orders.\nOrder ID:{{ $json['Order ID'] }}\nCustomer Name:{{ $json['Customer Name'] }}\nProduct:{{ $json.Product }}\nQuantity:{{ $json.Quantity }}\nPrice:{{ $json.Price }}\nOrder Date:{{ $json['Order Date'] }}\nStatus:{{ $json.Status }}\n\nPlease output the following parameters:\nEmail Subject\nEmail Body",
+              "role": "system"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        368,
+        96
+      ],
+      "id": "77106398-333d-4de0-9f58-952b432c0c46",
+      "name": "Summarize"
+    },
+    {
+      "parameters": {
+        "sendTo": "soheil.tehranipoor@gmail.com",
+        "subject": "={{ $json.message.content['Email Subject'] }}",
+        "emailType": "text",
+        "message": "={{ $json.message.content['Email Body'] }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        704,
+        224
+      ],
+      "id": "5ca9dea0-cc63-4181-9734-be5b6f50c4b2",
+      "name": "Send a message",
+      "webhookId": "c963b4b4-46ed-4251-8978-1f1e34be8528"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1b0LQxSzn6zbHPx_R0Np9eVHi8eXUB5jImc9v7WAWpf8",
+          "mode": "list",
+          "cachedResultName": "Sales List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b0LQxSzn6zbHPx_R0Np9eVHi8eXUB5jImc9v7WAWpf8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b0LQxSzn6zbHPx_R0Np9eVHi8eXUB5jImc9v7WAWpf8/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        144,
+        224
+      ],
+      "id": "b0df4f75-daf5-4754-aa16-d415dc5ea2b7",
+      "name": "Google Sheets Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "ce81576f-3d2a-428a-b0b4-e780779f00a1",
+  "meta": {
+    "instanceId": "6e9917855a827fa5eef4d58948750bed346cceba9050e21f2524bc0b32dc78c8"
+  },
+  "id": "V8lelAKegcReaaIEVBHdp",
+  "tags": []
+}
